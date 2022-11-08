@@ -119,7 +119,7 @@ public class JwtRsa {
             publicKeyString = publicKeyString.replace("-----BEGIN PUBLIC KEY-----", "")
                     .replace("-----END PUBLIC KEY-----", "")
                     .replaceAll(headerStripRegex, "");
-            System.out.println("publicKeyString="+publicKeyString);
+            //System.out.println("publicKeyString="+publicKeyString);
             
             byte[] publicBytes = Base64.getDecoder().decode(publicKeyString);
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicBytes);
@@ -168,7 +168,7 @@ public class JwtRsa {
             privateKeyString = privateKeyString.replace("-----BEGIN PRIVATE KEY-----", "")
                     .replace("-----END PRIVATE KEY-----", "")
                     .replaceAll(headerStripRegex, "");
-            System.out.println("privateKeyString="+privateKeyString);
+            //System.out.println("privateKeyString="+privateKeyString);
             
             // Convert String version into PublicKey data type.
 
@@ -217,7 +217,7 @@ public class JwtRsa {
             x5cString = x5cString.replace("-----BEGIN CERTIFICATE-----", "")
                     .replace("-----END CERTIFICATE-----", "")
                     .replaceAll(headerStripRegex, "");
-            System.out.println("x5cString="+x5cString);
+            //System.out.println("x5cString="+x5cString);
 
         } catch (Exception e){
             System.out.println("get x5c error "+ e.getMessage());

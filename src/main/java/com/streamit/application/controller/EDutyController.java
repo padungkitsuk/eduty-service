@@ -1,27 +1,25 @@
 package com.streamit.application.controller;
 
+import com.streamit.application.dto.*;
+import com.streamit.application.service.eduty.EDutyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.streamit.application.dto.AuthRes;
-import com.streamit.application.dto.EInstrumentCheckFile;
-import com.streamit.application.dto.EInstrumentCheckPay;
-import com.streamit.application.dto.EInstrumentReceipt;
-import com.streamit.application.dto.EInstrumentSubmit;
 import com.streamit.application.service.rd.RdService;
+
+import java.util.Map;
 
 @SpringBootApplication
 @RestController
-@CrossOrigin
+//@CrossOrigin
 @RequestMapping("/e-duty")
 public class EDutyController {
 
+    @Autowired
+    private EDutyService eDutyService;
     @Autowired
     private RdService rdService;
 
@@ -48,5 +46,10 @@ public class EDutyController {
     @PostMapping("/reqFormReceiptFile")
     public ResponseEntity<EInstrumentReceipt> ReqFormReceiptFile() throws Exception{
         return new ResponseEntity<>(rdService.ReqFormReceiptFile(), HttpStatus.OK) ;
+    }
+
+    @PostMapping("/correct/{type}")
+    public ResponseEntity<Map<String,Object>> correctData(@PathVariable("type") String type, @RequestBody CorrectReq req) throws Exception{
+        return new ResponseEntity<>(eDutyService.GetCorrectData(type,req), HttpStatus.OK) ;
     }
 }
