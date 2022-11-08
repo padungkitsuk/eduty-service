@@ -3,6 +3,7 @@ package com.streamit.application.service.eduty;
 import com.google.gson.Gson;
 import com.streamit.application.dto.CorrectData;
 import com.streamit.application.dto.CorrectDetail;
+import com.streamit.application.dto.CorrectDetailAddress;
 import com.streamit.application.dto.CorrectReq;
 import com.streamit.others.constant.SQLConstantOperType;
 import com.streamit.others.constant.SQLConstantWhereType;
@@ -15,10 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public interface EDutyService {
     Map<String,Object> GetCorrectData(String type, CorrectReq req)throws Exception;
@@ -32,6 +30,8 @@ class EDutyServiceImp implements EDutyService {
     private InquiryDAO edutyCorrectDataInquiryDAO;
     @Autowired
     private InquiryDAO edutyCorrectDetailInquiryDAO;
+    @Autowired
+    private InquiryDAO edutyCorrectDetailAddressInquiryDAO;
 
     public Map<String,Object> GetCorrectData(String type, CorrectReq req)throws Exception{
         Map<String,Object> result = new HashMap<>();
@@ -71,13 +71,26 @@ class EDutyServiceImp implements EDutyService {
             SearchCriteria searchCriteria = new SearchCriteria();
             List<SearchConditionValues> criterialList = new ArrayList<SearchConditionValues>();
             criterialList.add(new SearchConditionValues(SQLConstantWhereType.AND, "ID", SQLConstantOperType.EQUALS, new Object[]{req.getId()}));
+            criterialList.add(new SearchConditionValues(SQLConstantWhereType.AND, "SEQ", SQLConstantOperType.EQUALS, new Object[]{req.getNo()}));
 
             searchCriteria.setConditionValues(criterialList.toArray(new SearchConditionValues[]{}));
 
-            List<CorrectDetail> data = edutyCorrectDetailInquiryDAO.findAll(searchCriteria);
+            List<CorrectDetail> details = edutyCorrectDetailInquiryDAO.findAll(searchCriteria);
             //logger.info("data={}",new Gson().toJson(data));
+            CorrectDetail detail = new CorrectDetail();
+            if(details.size() > 0){
+                detail = details.get(0);
+            }
 
-            result.put("data", data);
+            List<CorrectDetailAddress> detailAddresses = edutyCorrectDetailAddressInquiryDAO.findAll(searchCriteria);
+            CorrectDetailAddress address = new CorrectDetailAddress();
+            if(detailAddresses.size() > 0){
+                address = detailAddresses.get(0);
+            }
+
+            detail.setAddress(address);
+
+            result.put("data", new ArrayList<>(Arrays.asList(detail)));
         }
 
 

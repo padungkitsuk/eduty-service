@@ -8,5 +8,6 @@ public class CorrectReq {
     private String lotName;
     private String approveStatus;
     private String id;
+    private Integer no;
     private Paging paging;
 }
