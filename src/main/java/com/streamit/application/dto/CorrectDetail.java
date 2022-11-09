@@ -11,13 +11,5 @@ public class CorrectDetail {
     private Double totalDuty;
     private Double totalDubDutyAmount;
     private Double totalPayment;
-    private String contractNo;
-    private String contractStartDate;
-    private String contractEndDate;
-    private String branchNo;
-    private String branchType;
-    private String contractWith;
-    private String paymentEndDate;
-    private CorrectDetailAddress address;
 
 }

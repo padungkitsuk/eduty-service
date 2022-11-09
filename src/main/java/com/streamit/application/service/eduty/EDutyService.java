@@ -1,10 +1,7 @@
 package com.streamit.application.service.eduty;
 
 import com.google.gson.Gson;
-import com.streamit.application.dto.CorrectData;
-import com.streamit.application.dto.CorrectDetail;
-import com.streamit.application.dto.CorrectDetailAddress;
-import com.streamit.application.dto.CorrectReq;
+import com.streamit.application.dto.*;
 import com.streamit.others.constant.SQLConstantOperType;
 import com.streamit.others.constant.SQLConstantWhereType;
 import com.streamit.others.dao.InquiryDAO;
@@ -19,7 +16,8 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 public interface EDutyService {
-    Map<String,Object> GetCorrectData(String type, CorrectReq req)throws Exception;
+    Map<String,Object> CheckCorrectData(String type, CorrectReq req)throws Exception;
+    Map<String,Object> CheckSendData(String type, CorrectReq req)throws Exception;
 }
 
 @Service
@@ -31,11 +29,13 @@ class EDutyServiceImp implements EDutyService {
     @Autowired
     private InquiryDAO edutyCorrectDetailInquiryDAO;
     @Autowired
+    private InquiryDAO edutyCorrectDetailFormInquiryDAO;
+    @Autowired
     private InquiryDAO edutyCorrectDetailAddressInquiryDAO;
 
-    public Map<String,Object> GetCorrectData(String type, CorrectReq req)throws Exception{
+    public Map<String,Object> CheckCorrectData(String type, CorrectReq req)throws Exception{
         Map<String,Object> result = new HashMap<>();
-        logger.info("req={}",new Gson().toJson(req));
+        //logger.info("req={}",new Gson().toJson(req));
 
         if("data".equals(type.toLowerCase().trim())) {
             SearchCriteria searchCriteria = new SearchCriteria(new Pagging(req.getPaging().getPageNo(), req.getPaging().getPageSize()));
@@ -67,6 +67,7 @@ class EDutyServiceImp implements EDutyService {
             //logger.info("data={}",new Gson().toJson(data));
 
             result.put("data", data);
+
         }else if("detail-form".equals(type.toLowerCase().trim())){
             SearchCriteria searchCriteria = new SearchCriteria();
             List<SearchConditionValues> criterialList = new ArrayList<SearchConditionValues>();
@@ -75,20 +76,19 @@ class EDutyServiceImp implements EDutyService {
 
             searchCriteria.setConditionValues(criterialList.toArray(new SearchConditionValues[]{}));
 
-            List<CorrectDetail> details = edutyCorrectDetailInquiryDAO.findAll(searchCriteria);
+            List<CorrectDetailForm> details = edutyCorrectDetailFormInquiryDAO.findAll(searchCriteria);
             //logger.info("data={}",new Gson().toJson(data));
-            CorrectDetail detail = new CorrectDetail();
+            CorrectDetailForm detail = new CorrectDetailForm();
             if(details.size() > 0){
                 detail = details.get(0);
             }
 
             List<CorrectDetailAddress> detailAddresses = edutyCorrectDetailAddressInquiryDAO.findAll(searchCriteria);
-            CorrectDetailAddress address = new CorrectDetailAddress();
             if(detailAddresses.size() > 0){
-                address = detailAddresses.get(0);
+                detail.setAddress(detailAddresses.get(0));
             }
 
-            detail.setAddress(address);
+
 
             result.put("data", new ArrayList<>(Arrays.asList(detail)));
         }
@@ -99,4 +99,13 @@ class EDutyServiceImp implements EDutyService {
     }
 
 
+    public Map<String,Object> CheckSendData(String type, CorrectReq req)throws Exception{
+        Map<String,Object> result = new HashMap<>();
+
+        if("data".equals(type.toLowerCase().trim())) {
+            
+        }
+
+        return result;
+    }
 }

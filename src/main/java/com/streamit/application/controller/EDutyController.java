@@ -50,6 +50,11 @@ public class EDutyController {
 
     @PostMapping("/correct/{type}")
     public ResponseEntity<Map<String,Object>> correctData(@PathVariable("type") String type, @RequestBody CorrectReq req) throws Exception{
-        return new ResponseEntity<>(eDutyService.GetCorrectData(type,req), HttpStatus.OK) ;
+        return new ResponseEntity<>(eDutyService.CheckCorrectData(type,req), HttpStatus.OK) ;
+    }
+
+    @PostMapping("/send/{type}")
+    public ResponseEntity<Map<String,Object>> sendData(@PathVariable("type") String type, @RequestBody CorrectReq req) throws Exception{
+        return new ResponseEntity<>(eDutyService.CheckSendData(type,req), HttpStatus.OK) ;
     }
 }

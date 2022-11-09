@@ -36,6 +36,22 @@
         </property>
     </bean>
 
+    <bean id="edutyCorrectDetailFormInquiryDAO" class="com.streamit.others.dao.InquiryDAOImpl" autowire="byName">
+        <property name="sql">
+            <value>
+                <![CDATA[
+                			SELECT SEQ AS [NO], *
+                			FROM DUTY_STAMP_DETAIL
+                            where 1 = 1
+
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.streamit.application.dto.CorrectDetailForm</value>
+        </property>
+    </bean>
+
     <bean id="edutyCorrectDetailAddressInquiryDAO" class="com.streamit.others.dao.InquiryDAOImpl" autowire="byName">
         <property name="sql">
             <value>
