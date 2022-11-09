@@ -1,6 +1,5 @@
 package com.streamit.application.service.eduty;
 
-import com.google.gson.Gson;
 import com.streamit.application.dto.*;
 import com.streamit.others.constant.SQLConstantOperType;
 import com.streamit.others.constant.SQLConstantWhereType;
@@ -18,6 +17,8 @@ import java.util.*;
 public interface EDutyService {
     Map<String,Object> CheckCorrectData(String type, CorrectReq req)throws Exception;
     Map<String,Object> CheckSendData(String type, CorrectReq req)throws Exception;
+    Map<String,Object> CheckInvoiceData(String type, CorrectReq req)throws Exception;
+    Map<String,Object> CheckReceiptFormData(String type, CorrectReq req)throws Exception;
 }
 
 @Service
@@ -32,6 +33,14 @@ class EDutyServiceImp implements EDutyService {
     private InquiryDAO edutyCorrectDetailFormInquiryDAO;
     @Autowired
     private InquiryDAO edutyCorrectDetailAddressInquiryDAO;
+    @Autowired
+    private InquiryDAO edutySendDataInquiryDAO;
+    @Autowired
+    private InquiryDAO edutySendDetailInquiryDAO;
+    @Autowired
+    private InquiryDAO edutyInvDataInquiryDAO;
+    @Autowired
+    private InquiryDAO edutyReceiptFormDataInquiryDAO;
 
     public Map<String,Object> CheckCorrectData(String type, CorrectReq req)throws Exception{
         Map<String,Object> result = new HashMap<>();
@@ -103,7 +112,86 @@ class EDutyServiceImp implements EDutyService {
         Map<String,Object> result = new HashMap<>();
 
         if("data".equals(type.toLowerCase().trim())) {
-            
+            SearchCriteria searchCriteria = new SearchCriteria(new Pagging(req.getPaging().getPageNo(), req.getPaging().getPageSize()));
+            List<SearchConditionValues> criterialList = new ArrayList<SearchConditionValues>();
+            criterialList.add(new SearchConditionValues(SQLConstantWhereType.AND, "D1.BATCH_DATE", SQLConstantOperType.EQUALS, new Object[]{req.getBatchDate()}));
+            criterialList.add(new SearchConditionValues(SQLConstantWhereType.AND, "D1.LOT_NAME", SQLConstantOperType.EQUALS, new Object[]{req.getLotName()}));
+            criterialList.add(new SearchConditionValues(SQLConstantWhereType.AND, "D1.APPROVE_STATUS", SQLConstantOperType.EQUALS, new Object[]{req.getApproveStatus()}));
+            criterialList.add(new SearchConditionValues(SQLConstantWhereType.AND, "D1.PAYMENT_STATUS", SQLConstantOperType.EQUALS, new Object[]{req.getPaymentStatus()}));
+
+            //if(req.getCaseId() != null && !"".equals(req.getCaseId().trim())) {
+            //    criterialList.add(new SearchConditionValues(SQLConstantWhereType.AND, "CLAIM_ID", SQLConstantOperType.LIKE, new Object[]{"%" + req.getCaseId() + "%"}));
+            //}
+
+            searchCriteria.setConditionValues(criterialList.toArray(new SearchConditionValues[]{}));
+
+            List<SendRdData> data = edutySendDataInquiryDAO.findByPage(searchCriteria);
+            //logger.info("data={}",new Gson().toJson(data));
+
+            result.put("data", data);
+            result.put("pagging", searchCriteria.getPagging());
+
+        }else if("detail".equals(type.toLowerCase().trim())){
+            SearchCriteria searchCriteria = new SearchCriteria();
+            List<SearchConditionValues> criterialList = new ArrayList<SearchConditionValues>();
+            criterialList.add(new SearchConditionValues(SQLConstantWhereType.AND, "ID", SQLConstantOperType.EQUALS, new Object[]{req.getId()}));
+
+            searchCriteria.setConditionValues(criterialList.toArray(new SearchConditionValues[]{}));
+
+            List<SendRdDetail> data = edutySendDetailInquiryDAO.findAll(searchCriteria);
+            //logger.info("data={}",new Gson().toJson(data));
+
+            result.put("data", data);
+
+        }
+
+        return result;
+    }
+
+    public Map<String,Object> CheckInvoiceData(String type, CorrectReq req)throws Exception{
+        Map<String,Object> result = new HashMap<>();
+
+        if("data".equals(type.toLowerCase().trim())) {
+            SearchCriteria searchCriteria = new SearchCriteria(new Pagging(req.getPaging().getPageNo(), req.getPaging().getPageSize()));
+            List<SearchConditionValues> criterialList = new ArrayList<SearchConditionValues>();
+            criterialList.add(new SearchConditionValues(SQLConstantWhereType.AND, "BATCH_DATE", SQLConstantOperType.EQUALS, new Object[]{req.getBatchDate()}));
+            criterialList.add(new SearchConditionValues(SQLConstantWhereType.AND, "LOT_NAME", SQLConstantOperType.EQUALS, new Object[]{req.getLotName()}));
+            criterialList.add(new SearchConditionValues(SQLConstantWhereType.AND, "SEND_RD_STATUS", SQLConstantOperType.EQUALS, new Object[]{req.getSendRdStatus()}));
+            criterialList.add(new SearchConditionValues(SQLConstantWhereType.AND, "PAYMENT_STATUS", SQLConstantOperType.EQUALS, new Object[]{req.getPaymentStatus()}));
+
+            //if(req.getCaseId() != null && !"".equals(req.getCaseId().trim())) {
+            //    criterialList.add(new SearchConditionValues(SQLConstantWhereType.AND, "CLAIM_ID", SQLConstantOperType.LIKE, new Object[]{"%" + req.getCaseId() + "%"}));
+            //}
+
+            searchCriteria.setConditionValues(criterialList.toArray(new SearchConditionValues[]{}));
+
+            List<InvoiceData> data = edutyInvDataInquiryDAO.findByPage(searchCriteria);
+            //logger.info("data={}",new Gson().toJson(data));
+
+            result.put("data", data);
+            result.put("pagging", searchCriteria.getPagging());
+
+        }
+
+        return result;
+    }
+
+    public Map<String,Object> CheckReceiptFormData(String type, CorrectReq req)throws Exception{
+        Map<String,Object> result = new HashMap<>();
+
+        if("data".equals(type.toLowerCase().trim())) {
+            SearchCriteria searchCriteria = new SearchCriteria(new Pagging(req.getPaging().getPageNo(), req.getPaging().getPageSize()));
+            List<SearchConditionValues> criterialList = new ArrayList<SearchConditionValues>();
+            criterialList.add(new SearchConditionValues(SQLConstantWhereType.AND, "REF1", SQLConstantOperType.EQUALS, new Object[]{req.getRefNo()}));
+
+            searchCriteria.setConditionValues(criterialList.toArray(new SearchConditionValues[]{}));
+
+            List<ReceiptFormData> data = edutyReceiptFormDataInquiryDAO.findByPage(searchCriteria);
+            //logger.info("data={}",new Gson().toJson(data));
+
+            result.put("data", data);
+            result.put("pagging", searchCriteria.getPagging());
+
         }
 
         return result;

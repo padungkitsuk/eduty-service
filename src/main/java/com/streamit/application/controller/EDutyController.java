@@ -53,8 +53,18 @@ public class EDutyController {
         return new ResponseEntity<>(eDutyService.CheckCorrectData(type,req), HttpStatus.OK) ;
     }
 
-    @PostMapping("/send/{type}")
+    @PostMapping("/send-rd/{type}")
     public ResponseEntity<Map<String,Object>> sendData(@PathVariable("type") String type, @RequestBody CorrectReq req) throws Exception{
         return new ResponseEntity<>(eDutyService.CheckSendData(type,req), HttpStatus.OK) ;
+    }
+
+    @PostMapping("/invoice/{type}")
+    public ResponseEntity<Map<String,Object>> invoiceData(@PathVariable("type") String type, @RequestBody CorrectReq req) throws Exception{
+        return new ResponseEntity<>(eDutyService.CheckInvoiceData(type,req), HttpStatus.OK) ;
+    }
+
+    @PostMapping("/receipt/{type}")
+    public ResponseEntity<Map<String,Object>> receiptData(@PathVariable("type") String type, @RequestBody CorrectReq req) throws Exception{
+        return new ResponseEntity<>(eDutyService.CheckReceiptFormData(type,req), HttpStatus.OK) ;
     }
 }

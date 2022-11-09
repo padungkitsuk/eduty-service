@@ -68,5 +68,72 @@
         </property>
     </bean>
 
+    <bean id="edutySendDataInquiryDAO" class="com.streamit.others.dao.InquiryDAOImpl" autowire="byName">
+        <property name="sql">
+            <value>
+                <![CDATA[
+                			SELECT D1.* ,
+                			ROW_NUMBER() OVER(ORDER BY D1.ID ASC) AS [NO],
+                			(select count(ID) from DUTY_STAMP_DETAIL where ID=D1.ID AND SEND_RD_STATUS='F') AS FAIL
+                			FROM DUTY_STAMP D1
+                            where 1 = 1
+
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.streamit.application.dto.SendRdData</value>
+        </property>
+    </bean>
+
+    <bean id="edutySendDetailInquiryDAO" class="com.streamit.others.dao.InquiryDAOImpl" autowire="byName">
+        <property name="sql">
+            <value>
+                <![CDATA[
+                			SELECT SEQ AS [NO], *
+                			FROM DUTY_STAMP_DETAIL
+                            where 1 = 1
+
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.streamit.application.dto.SendRdDetail</value>
+        </property>
+    </bean>
+
+    <bean id="edutyInvDataInquiryDAO" class="com.streamit.others.dao.InquiryDAOImpl" autowire="byName">
+        <property name="sql">
+            <value>
+                <![CDATA[
+                			SELECT ROW_NUMBER() OVER(ORDER BY ID ASC) AS [NO],
+                			*
+                			FROM DUTY_STAMP
+                            where 1 = 1
+
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.streamit.application.dto.InvoiceData</value>
+        </property>
+    </bean>
+
+    <bean id="edutyReceiptFormDataInquiryDAO" class="com.streamit.others.dao.InquiryDAOImpl" autowire="byName">
+        <property name="sql">
+            <value>
+                <![CDATA[
+                			SELECT ROW_NUMBER() OVER(ORDER BY ID ASC) AS [NO],
+                			*
+                			FROM DUTY_STAMP
+                            where 1 = 1
+
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.streamit.application.dto.ReceiptFormData</value>
+        </property>
+    </bean>
 
 </beans>
