@@ -72,7 +72,7 @@ public class JwtRsa {
                 .parseClaimsJws(token);
 
         System.out.println("Header     : " + parseClaimsJws.getHeader());
-        System.out.println("Body       : " + parseClaimsJws.getBody());
+        System.out.println("Body       : " + new Gson().toJson(parseClaimsJws.getBody()));
         System.out.println("Signature  : " + parseClaimsJws.getSignature());
     }
 

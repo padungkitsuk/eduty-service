@@ -8,49 +8,26 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.streamit.application.service.rd.RdService;
-
 import java.util.Map;
 
 @SpringBootApplication
 @RestController
-//@CrossOrigin
-@RequestMapping("/e-duty")
+@CrossOrigin
+@RequestMapping("")
 public class EDutyController {
 
     @Autowired
     private EDutyService eDutyService;
-    @Autowired
-    private RdService rdService;
 
-    @PostMapping("/submitFilingAuth")
-    public ResponseEntity<AuthRes> SubmitFilingAuth() throws Exception{
-        return new ResponseEntity<>(rdService.SubmitFilingAuth(), HttpStatus.OK) ;
-    }
-
-    @PostMapping("/submitFiling")
-    public ResponseEntity<EInstrumentSubmit> SubmitFiling() throws Exception{
-        return new ResponseEntity<>(rdService.SubmitFiling(), HttpStatus.OK) ;
-    }
-
-    @PostMapping("/checkFilingStatus")
-    public ResponseEntity<EInstrumentCheckFile> CheckFilingStatus() throws Exception{
-        return new ResponseEntity<>(rdService.CheckFilingStatus(), HttpStatus.OK) ;
-    }
-
-    @PostMapping("/checkPaymentStatus")
-    public ResponseEntity<EInstrumentCheckPay> CheckPaymentStatus() throws Exception{
-        return new ResponseEntity<>(rdService.CheckPaymentStatus(), HttpStatus.OK) ;
-    }
-
-    @PostMapping("/reqFormReceiptFile")
-    public ResponseEntity<EInstrumentReceipt> ReqFormReceiptFile() throws Exception{
-        return new ResponseEntity<>(rdService.ReqFormReceiptFile(), HttpStatus.OK) ;
-    }
 
     @PostMapping("/correct/{type}")
     public ResponseEntity<Map<String,Object>> correctData(@PathVariable("type") String type, @RequestBody CorrectReq req) throws Exception{
         return new ResponseEntity<>(eDutyService.CheckCorrectData(type,req), HttpStatus.OK) ;
+    }
+
+    @PutMapping("/correct/detail-form")
+    public ResponseEntity<Map<String,Object>> correctDataPut(@RequestBody CorrectDetailForm req) throws Exception{
+        return new ResponseEntity<>(eDutyService.CheckCorrectDataPut(req), HttpStatus.OK) ;
     }
 
     @PostMapping("/send-rd/{type}")
@@ -66,5 +43,15 @@ public class EDutyController {
     @PostMapping("/receipt/{type}")
     public ResponseEntity<Map<String,Object>> receiptData(@PathVariable("type") String type, @RequestBody CorrectReq req) throws Exception{
         return new ResponseEntity<>(eDutyService.CheckReceiptFormData(type,req), HttpStatus.OK) ;
+    }
+
+    @PostMapping("/correct/test-insert")
+    public ResponseEntity<Map<String,Object>> testInsert(@RequestBody CorrectDetailForm req) throws Exception{
+        return new ResponseEntity<>(eDutyService.TestInsertData(req), HttpStatus.OK) ;
+    }
+
+    @DeleteMapping("/correct/test-delete")
+    public ResponseEntity<Map<String,Object>> testDelete(@RequestBody CorrectDetailForm req) throws Exception{
+        return new ResponseEntity<>(eDutyService.TestDeleteData(req), HttpStatus.OK) ;
     }
 }

@@ -19,5 +19,10 @@ public class SQLConstantOperType {
 	public static final String IS_NOT_NULL			= "IS NOT NULL";
 	public static final String DATEDIFF_EQUALS		= "DATEDIFF";
 	public static final String WHERE				= "WHERE";
+	public static final String INSERT				= "INSERT INTO ";
+	public static final String VALUES				= " VALUES ";
+	public static final String UPDATE				= "UPDATE ";
+	public static final String SET					= " SET ";
+	public static final String DELETE				= "DELETE ";
 
 }

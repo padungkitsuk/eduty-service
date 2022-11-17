@@ -24,7 +24,7 @@
         <property name="sql">
             <value>
                 <![CDATA[
-                			SELECT SEQ AS [NO], *
+                			SELECT SEQ AS [NO], *, CONCAT(FIRST_NAME,' ',LAST_NAME) as FULL_NAME
                 			FROM DUTY_STAMP_DETAIL
                             where 1 = 1
 
@@ -40,7 +40,7 @@
         <property name="sql">
             <value>
                 <![CDATA[
-                			SELECT SEQ AS [NO], *
+                			SELECT SEQ AS [NO], *, CONCAT(FIRST_NAME,' ',LAST_NAME) as FULL_NAME
                 			FROM DUTY_STAMP_DETAIL
                             where 1 = 1
 
@@ -90,7 +90,7 @@
         <property name="sql">
             <value>
                 <![CDATA[
-                			SELECT SEQ AS [NO], *
+                			SELECT SEQ AS [NO], *, CONCAT(FIRST_NAME,' ',LAST_NAME) as FULL_NAME
                 			FROM DUTY_STAMP_DETAIL
                             where 1 = 1
 

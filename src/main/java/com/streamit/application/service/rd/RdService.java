@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.streamit.application.dto.*;
 import com.streamit.application.service.jwt.JWebToken;
 import com.streamit.application.service.jwt.JwtRsa;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -20,9 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public interface RdService {
     AuthRes SubmitFilingAuth() throws Exception;
@@ -32,9 +31,9 @@ public interface RdService {
     EInstrumentReceipt ReqFormReceiptFile() throws Exception;
 }
 
+@Slf4j
 @Service
 class RdServiceImp implements RdService {
-    private Logger logger = LoggerFactory.getLogger(RdService.class);
 
     private static final int EXPIRY_DAYS = 90;
     @Value("${rd.host}")
@@ -94,8 +93,13 @@ class RdServiceImp implements RdService {
         Map<String,Object> eInstrument = new HashMap<>();
         eInstrument.put("sender",sender);
 
-        Map<String,Object> payloadObj = new HashMap<>();
-        payloadObj.put("status", 0);
+        
+        
+        RdFormSubmitReq payloadObj = new RdFormSubmitReq(
+        		new DocumentDetail("rdtest201908200041001","OS9","7","01.00.0001",1), 
+        		new ArrayList<InstInfoSubmitReq>(), 
+        		new Summary()
+        		);
 
         String payloadStr = new Gson().toJson(payloadObj);
         //String token = new JWebToken(payloadStr, null).getToken();
@@ -166,7 +170,7 @@ class RdServiceImp implements RdService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<CheckFileRes> response = restTemplate.postForEntity(url, request, CheckFileRes.class);
 
-        logger.info("auth res ={}", new Gson().toJson(response));
+        log.info("auth res ={}", new Gson().toJson(response));
 
 
         return response.getBody().getEInstrument();
@@ -198,7 +202,7 @@ class RdServiceImp implements RdService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<CheckPayRes> response = restTemplate.postForEntity(url, request, CheckPayRes.class);
 
-        logger.info("auth res ={}", new Gson().toJson(response));
+        log.info("auth res ={}", new Gson().toJson(response));
 
         return response.getBody().getEInstrument();
     }
@@ -229,7 +233,7 @@ class RdServiceImp implements RdService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<ReceiptRes> response = restTemplate.postForEntity(url, request, ReceiptRes.class);
 
-        logger.info("auth res ={}", new Gson().toJson(response));
+        log.info("auth res ={}", new Gson().toJson(response));
 
         return response.getBody().getEInstrument();
     }

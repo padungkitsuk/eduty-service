@@ -1,29 +1,38 @@
 package com.streamit.application.service.eduty;
 
+import com.google.gson.Gson;
 import com.streamit.application.dto.*;
+import com.streamit.application.utils.datasources.DataSourceService;
+import com.streamit.others.constant.SQLConstantFildeType;
 import com.streamit.others.constant.SQLConstantOperType;
 import com.streamit.others.constant.SQLConstantWhereType;
 import com.streamit.others.dao.InquiryDAO;
 import com.streamit.others.jdbc.Pagging;
 import com.streamit.others.jdbc.SearchConditionValues;
 import com.streamit.others.jdbc.SearchCriteria;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.streamit.others.jdbc.StateValues;
+import org.apache.commons.lang3.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 
 import java.util.*;
 
 public interface EDutyService {
     Map<String,Object> CheckCorrectData(String type, CorrectReq req)throws Exception;
+    Map<String,Object> CheckCorrectDataPut(CorrectDetailForm req)throws Exception;
     Map<String,Object> CheckSendData(String type, CorrectReq req)throws Exception;
     Map<String,Object> CheckInvoiceData(String type, CorrectReq req)throws Exception;
     Map<String,Object> CheckReceiptFormData(String type, CorrectReq req)throws Exception;
+    Map<String,Object> TestInsertData(CorrectDetailForm req)throws Exception;
+    Map<String,Object> TestDeleteData(CorrectDetailForm req)throws Exception;
 }
 
+@Slf4j
 @Service
 class EDutyServiceImp implements EDutyService {
-    private Logger logger = LoggerFactory.getLogger(EDutyService.class);
+
 
     @Autowired
     private InquiryDAO edutyCorrectDataInquiryDAO;
@@ -41,6 +50,8 @@ class EDutyServiceImp implements EDutyService {
     private InquiryDAO edutyInvDataInquiryDAO;
     @Autowired
     private InquiryDAO edutyReceiptFormDataInquiryDAO;
+    @Autowired
+    private DataSourceService dataSourceService;
 
     public Map<String,Object> CheckCorrectData(String type, CorrectReq req)throws Exception{
         Map<String,Object> result = new HashMap<>();
@@ -103,6 +114,81 @@ class EDutyServiceImp implements EDutyService {
         }
 
 
+
+        return result;
+    }
+
+    public Map<String,Object> CheckCorrectDataPut(CorrectDetailForm req)throws Exception{
+        Map<String,Object> result = new HashMap<>();
+        result.put("status",400);
+        //log.info("req={}",new Gson().toJson(req));
+
+        if(StringUtils.isEmpty(req.getId()) || StringUtils.isEmpty(req.getNo() == null ? "" : req.getNo().toString())){
+            result.put("error","Bad Request : id or no");
+        }else {
+            List<StateValues> stateList = new ArrayList<>();
+            stateList.add(new StateValues(SQLConstantFildeType.STRING, "INST_INFO_ID", SQLConstantOperType.EQUALS, req.getInstInfoId()));
+            stateList.add(new StateValues(SQLConstantFildeType.STRING, "TAX_PAYER_ID", SQLConstantOperType.EQUALS, req.getTaxPayerId()));
+            String[] arr_name = req.getFullName().split(" ");
+            stateList.add(new StateValues(SQLConstantFildeType.STRING, "FIRST_NAME", SQLConstantOperType.EQUALS, arr_name[0]));
+            stateList.add(new StateValues(SQLConstantFildeType.STRING, "LAST_NAME", SQLConstantOperType.EQUALS, arr_name[1]));
+            stateList.add(new StateValues(SQLConstantFildeType.NUMBER, "TOTAL_DUTY", SQLConstantOperType.EQUALS, req.getTotalDuty()));
+            stateList.add(new StateValues(SQLConstantFildeType.NUMBER, "TOTAL_DUB_DUTY_AMOUNT", SQLConstantOperType.EQUALS, req.getTotalDubDutyAmount()));
+            stateList.add(new StateValues(SQLConstantFildeType.NUMBER, "TOTAL_PAYMENT", SQLConstantOperType.EQUALS, req.getTotalPayment()));
+            stateList.add(new StateValues(SQLConstantFildeType.STRING, "CONTRACT_NO", SQLConstantOperType.EQUALS, req.getContractNo()));
+            stateList.add(new StateValues(SQLConstantFildeType.DATE, "CONTRACT_START_DATE", SQLConstantOperType.EQUALS, req.getContractStartDate()));
+            stateList.add(new StateValues(SQLConstantFildeType.DATE, "CONTRACT_END_DATE", SQLConstantOperType.EQUALS, req.getContractEndDate()));
+            stateList.add(new StateValues(SQLConstantFildeType.STRING, "BRANCH_NO", SQLConstantOperType.EQUALS, req.getBranchNo()));
+            stateList.add(new StateValues(SQLConstantFildeType.STRING, "BRANCH_TYPE", SQLConstantOperType.EQUALS, req.getBranchType()));
+            stateList.add(new StateValues(SQLConstantFildeType.STRING, "CONTRACT_WITH", SQLConstantOperType.EQUALS, req.getContractWith()));
+            stateList.add(new StateValues(SQLConstantFildeType.DATE, "PAYMENT_END_DATE", SQLConstantOperType.EQUALS, req.getPaymentEndDate()));
+            stateList.add(new StateValues(SQLConstantFildeType.STRING, "ID", SQLConstantOperType.WHERE, req.getId()));
+            stateList.add(new StateValues(SQLConstantFildeType.NUMBER, "SEQ", SQLConstantOperType.WHERE, req.getNo()));
+
+            Map<String, Object> result1 = dataSourceService.update("DUTY_STAMP_DETAIL", stateList);
+
+            CorrectDetailAddress addReq = req.getAddress();
+
+            List<StateValues> addStateList = new ArrayList<>();
+            addStateList.add(new StateValues(SQLConstantFildeType.STRING, "PREFIX_CODE", SQLConstantOperType.EQUALS, addReq.getPrefixCode()));
+            addStateList.add(new StateValues(SQLConstantFildeType.STRING, "PREFIX", SQLConstantOperType.EQUALS, addReq.getPrefix()));
+            addStateList.add(new StateValues(SQLConstantFildeType.STRING, "FIRST_NAME", SQLConstantOperType.EQUALS, addReq.getFirstName()));
+            addStateList.add(new StateValues(SQLConstantFildeType.STRING, "LAST_NAME", SQLConstantOperType.EQUALS, addReq.getLastName()));
+            addStateList.add(new StateValues(SQLConstantFildeType.STRING, "ADDR_NUMBER", SQLConstantOperType.EQUALS, addReq.getAddrNumber()));
+            addStateList.add(new StateValues(SQLConstantFildeType.STRING, "MOO", SQLConstantOperType.EQUALS, addReq.getMoo()));
+            addStateList.add(new StateValues(SQLConstantFildeType.STRING, "MOOBAN", SQLConstantOperType.EQUALS, addReq.getMooban()));
+            addStateList.add(new StateValues(SQLConstantFildeType.STRING, "SOI", SQLConstantOperType.EQUALS, addReq.getSoi()));
+            addStateList.add(new StateValues(SQLConstantFildeType.STRING, "ROAD", SQLConstantOperType.EQUALS, addReq.getRoad()));
+            addStateList.add(new StateValues(SQLConstantFildeType.STRING, "TAMBOL_CODE", SQLConstantOperType.EQUALS, addReq.getTambolCode()));
+            addStateList.add(new StateValues(SQLConstantFildeType.STRING, "TAMBOL", SQLConstantOperType.EQUALS, addReq.getTambol()));
+            addStateList.add(new StateValues(SQLConstantFildeType.STRING, "AMPHUR_CODE", SQLConstantOperType.EQUALS, addReq.getAmphurCode()));
+            addStateList.add(new StateValues(SQLConstantFildeType.STRING, "AMPHUR", SQLConstantOperType.EQUALS, addReq.getAmphur()));
+            addStateList.add(new StateValues(SQLConstantFildeType.STRING, "PROVINCE_CODE", SQLConstantOperType.EQUALS, addReq.getProvinceCode()));
+            addStateList.add(new StateValues(SQLConstantFildeType.STRING, "PROVINCE", SQLConstantOperType.EQUALS, addReq.getProvince()));
+            addStateList.add(new StateValues(SQLConstantFildeType.STRING, "ZIPCODE", SQLConstantOperType.EQUALS, addReq.getZipcode()));
+            addStateList.add(new StateValues(SQLConstantFildeType.STRING, "ID", SQLConstantOperType.WHERE, req.getId()));
+            addStateList.add(new StateValues(SQLConstantFildeType.NUMBER, "SEQ", SQLConstantOperType.WHERE, req.getNo()));
+
+            Map<String, Object> result2 = dataSourceService.update("ADDRESS", addStateList);
+
+            log.info("result1: {} result2: {}", result1.get("status"), result2.get("status"));
+
+            Boolean check1 = (Integer)result1.get("status") == 200;
+            Boolean check2 = (Integer)result2.get("status") == 200;
+
+            if(check1 && check2){
+                result.put("status",200);
+            }else {
+
+                if(!check1)
+                    result.put("error", result1.get("error"));
+                else
+                    result.put("error", result2.get("error"));
+
+            }
+
+
+        }
 
         return result;
     }
@@ -191,6 +277,134 @@ class EDutyServiceImp implements EDutyService {
 
             result.put("data", data);
             result.put("pagging", searchCriteria.getPagging());
+
+        }
+
+        return result;
+    }
+
+    public Map<String,Object> TestInsertData(CorrectDetailForm req)throws Exception{
+        Map<String,Object> result = new HashMap<>();
+        result.put("status",400);
+        //log.info("req={}",new Gson().toJson(req));
+
+        if(StringUtils.isEmpty(req.getId()) || StringUtils.isEmpty(req.getNo() == null ? "" : req.getNo().toString())){
+            result.put("error","Bad Request : id or no");
+        }else {
+            List<StateValues> stateList = new ArrayList<>();
+            stateList.add(new StateValues(SQLConstantFildeType.STRING, "ID", SQLConstantOperType.EQUALS, req.getId()));
+            stateList.add(new StateValues(SQLConstantFildeType.NUMBER, "SEQ", SQLConstantOperType.EQUALS, req.getNo()));
+            stateList.add(new StateValues(SQLConstantFildeType.STRING, "INST_INFO_ID", SQLConstantOperType.EQUALS, req.getInstInfoId()));
+            stateList.add(new StateValues(SQLConstantFildeType.STRING, "TAX_PAYER_ID", SQLConstantOperType.EQUALS, req.getTaxPayerId()));
+            String[] arr_name = req.getFullName().split(" ");
+            stateList.add(new StateValues(SQLConstantFildeType.STRING, "FIRST_NAME", SQLConstantOperType.EQUALS, arr_name[0]));
+            stateList.add(new StateValues(SQLConstantFildeType.STRING, "LAST_NAME", SQLConstantOperType.EQUALS, arr_name[1]));
+            stateList.add(new StateValues(SQLConstantFildeType.NUMBER, "TOTAL_DUTY", SQLConstantOperType.EQUALS, req.getTotalDuty()));
+            stateList.add(new StateValues(SQLConstantFildeType.NUMBER, "TOTAL_DUB_DUTY_AMOUNT", SQLConstantOperType.EQUALS, req.getTotalDubDutyAmount()));
+            stateList.add(new StateValues(SQLConstantFildeType.NUMBER, "TOTAL_PAYMENT", SQLConstantOperType.EQUALS, req.getTotalPayment()));
+            stateList.add(new StateValues(SQLConstantFildeType.STRING, "CONTRACT_NO", SQLConstantOperType.EQUALS, req.getContractNo()));
+            stateList.add(new StateValues(SQLConstantFildeType.DATE, "CONTRACT_START_DATE", SQLConstantOperType.EQUALS, req.getContractStartDate()));
+            stateList.add(new StateValues(SQLConstantFildeType.DATE, "CONTRACT_END_DATE", SQLConstantOperType.EQUALS, req.getContractEndDate()));
+            stateList.add(new StateValues(SQLConstantFildeType.STRING, "BRANCH_NO", SQLConstantOperType.EQUALS, req.getBranchNo()));
+            stateList.add(new StateValues(SQLConstantFildeType.STRING, "BRANCH_TYPE", SQLConstantOperType.EQUALS, req.getBranchType()));
+            stateList.add(new StateValues(SQLConstantFildeType.STRING, "CONTRACT_WITH", SQLConstantOperType.EQUALS, req.getContractWith()));
+            stateList.add(new StateValues(SQLConstantFildeType.DATE, "PAYMENT_END_DATE", SQLConstantOperType.EQUALS, req.getPaymentEndDate()));
+
+            Map<String, Object> result1 = dataSourceService.insert("DUTY_STAMP_DETAIL", stateList);
+            Map<String, Object> result2 = new HashMap<>();
+
+            Boolean check1 = (Integer)result1.get("status") == 200;
+            Boolean check2 = false;
+
+            if(check1) {
+                CorrectDetailAddress addReq = req.getAddress();
+
+                List<StateValues> addStateList = new ArrayList<>();
+                addStateList.add(new StateValues(SQLConstantFildeType.STRING, "ID", SQLConstantOperType.EQUALS, req.getId()));
+                addStateList.add(new StateValues(SQLConstantFildeType.NUMBER, "SEQ", SQLConstantOperType.EQUALS, req.getNo()));
+                addStateList.add(new StateValues(SQLConstantFildeType.STRING, "PREFIX_CODE", SQLConstantOperType.EQUALS, addReq.getPrefixCode()));
+                addStateList.add(new StateValues(SQLConstantFildeType.STRING, "PREFIX", SQLConstantOperType.EQUALS, addReq.getPrefix()));
+                addStateList.add(new StateValues(SQLConstantFildeType.STRING, "FIRST_NAME", SQLConstantOperType.EQUALS, addReq.getFirstName()));
+                addStateList.add(new StateValues(SQLConstantFildeType.STRING, "LAST_NAME", SQLConstantOperType.EQUALS, addReq.getLastName()));
+                addStateList.add(new StateValues(SQLConstantFildeType.STRING, "ADDR_NUMBER", SQLConstantOperType.EQUALS, addReq.getAddrNumber()));
+                addStateList.add(new StateValues(SQLConstantFildeType.STRING, "MOO", SQLConstantOperType.EQUALS, addReq.getMoo()));
+                addStateList.add(new StateValues(SQLConstantFildeType.STRING, "MOOBAN", SQLConstantOperType.EQUALS, addReq.getMooban()));
+                addStateList.add(new StateValues(SQLConstantFildeType.STRING, "SOI", SQLConstantOperType.EQUALS, addReq.getSoi()));
+                addStateList.add(new StateValues(SQLConstantFildeType.STRING, "ROAD", SQLConstantOperType.EQUALS, addReq.getRoad()));
+                addStateList.add(new StateValues(SQLConstantFildeType.STRING, "TAMBOL_CODE", SQLConstantOperType.EQUALS, addReq.getTambolCode()));
+                addStateList.add(new StateValues(SQLConstantFildeType.STRING, "TAMBOL", SQLConstantOperType.EQUALS, addReq.getTambol()));
+                addStateList.add(new StateValues(SQLConstantFildeType.STRING, "AMPHUR_CODE", SQLConstantOperType.EQUALS, addReq.getAmphurCode()));
+                addStateList.add(new StateValues(SQLConstantFildeType.STRING, "AMPHUR", SQLConstantOperType.EQUALS, addReq.getAmphur()));
+                addStateList.add(new StateValues(SQLConstantFildeType.STRING, "PROVINCE_CODE", SQLConstantOperType.EQUALS, addReq.getProvinceCode()));
+                addStateList.add(new StateValues(SQLConstantFildeType.STRING, "PROVINCE", SQLConstantOperType.EQUALS, addReq.getProvince()));
+                addStateList.add(new StateValues(SQLConstantFildeType.STRING, "ZIPCODE", SQLConstantOperType.EQUALS, addReq.getZipcode()));
+
+                result2 = dataSourceService.insert("ADDRESS", addStateList);
+
+                check2 = (Integer)result2.get("status") == 200;
+            }
+
+            //log.info("result1: {} result2: {}", result1.get("status"), result2.get("status"));
+
+
+            if(check1 && check2){
+                result.put("status",200);
+            }else {
+
+                if(!check1)
+                    result.put("error", result1.get("error"));
+                else
+                    result.put("error", result2.get("error"));
+
+            }
+
+        }
+
+        return result;
+    }
+
+    public Map<String,Object> TestDeleteData(CorrectDetailForm req)throws Exception{
+        Map<String,Object> result = new HashMap<>();
+        result.put("status",400);
+        //log.info("req={}",new Gson().toJson(req));
+
+        if(StringUtils.isEmpty(req.getId()) || StringUtils.isEmpty(req.getNo() == null ? "" : req.getNo().toString())){
+            result.put("error","Bad Request : id or no");
+        }else {
+            List<StateValues> stateList = new ArrayList<>();
+            stateList.add(new StateValues(SQLConstantFildeType.STRING, "ID", SQLConstantOperType.WHERE, req.getId()));
+            stateList.add(new StateValues(SQLConstantFildeType.NUMBER, "SEQ", SQLConstantOperType.WHERE, req.getNo()));
+
+
+            Map<String, Object> result1 = dataSourceService.delete("DUTY_STAMP_DETAIL", stateList);
+            Map<String, Object> result2 = new HashMap<>();
+
+            Boolean check1 = (Integer)result1.get("status") == 200;
+            Boolean check2 = false;
+
+            if(check1) {
+                List<StateValues> addStateList = new ArrayList<>();
+                addStateList.add(new StateValues(SQLConstantFildeType.STRING, "ID", SQLConstantOperType.WHERE, req.getId()));
+                addStateList.add(new StateValues(SQLConstantFildeType.NUMBER, "SEQ", SQLConstantOperType.WHERE, req.getNo()));
+
+                result2 = dataSourceService.delete("ADDRESS", addStateList);
+
+                check2 = (Integer)result2.get("status") == 200;
+            }
+
+            //log.info("result1: {} result2: {}", result1.get("status"), result2.get("status"));
+
+
+            if(check1 && check2){
+                result.put("status",200);
+            }else {
+
+                if(!check1)
+                    result.put("error", result1.get("error"));
+                else
+                    result.put("error", result2.get("error"));
+
+            }
 
         }
 
