@@ -135,5 +135,22 @@
             <value>com.streamit.application.dto.ReceiptFormData</value>
         </property>
     </bean>
+    
+    <bean id="controlNumberInquiryDAO" class="com.streamit.others.dao.InquiryDAOImpl" autowire="byName" scope="prototype">
+        <property name="sql">
+            <value>
+                <![CDATA[
+                			SELECT RUNNING_NO as ID FROM CONTROL_RUNNO
+                            where 1 = 1
+
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.streamit.application.dto.SelectData</value>
+        </property>
+    </bean>
+    
+    
 
 </beans>

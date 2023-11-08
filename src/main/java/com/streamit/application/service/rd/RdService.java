@@ -93,12 +93,45 @@ class RdServiceImp implements RdService {
         Map<String,Object> eInstrument = new HashMap<>();
         eInstrument.put("sender",sender);
 
-        
+        InstInfoSubmitReq instInfo = new InstInfoSubmitReq(
+                "2562/01",
+                "pm00001",
+                new SimpleDateFormat("yyyy-MM-dd").parse("2019-02-21"),
+                new SimpleDateFormat("yyyy-MM-dd").parse("2019-02-21"),
+                new SimpleDateFormat("yyyy-MM-dd").parse("2019-02-28"),
+                "",
+                null,
+                "1",
+                0,
+                "0",
+                1,
+                100000.0,
+                null,
+                new TaxPayer(new SpecifiedTaxRegistration("1105878591534"),"1","V","2"),
+                new Party(new SpecifiedTaxRegistration("1103124567891"),"คำนำหนาชื่อ","ชื่อ","นามสกุล","1","v",
+                        new PostalTradeAddress("ชื่ออาคาร","เลขที่หอง","ชั้นที่","หมูบาน","อาคาร","หมูที่","ซอย","แยก","ถนน","แขวง/ตำบล","เขต/อำเภอ","กรุงเทพฯ","10900","TH"),
+                        2
+                ),
+                new AttachDetail("รายละเอียดเพิ่มเติมที่ 1 ของตราสาร","รายละเอียดเพิ่มเติมที่ 2 ของตราสาร","รายละเอียดเพิ่มเติมที่ 3 ของตราสาร","รายละเอียดเพิ่มเติมที่ 4 ของตราสาร",
+                        "","","","", new SimpleDateFormat("yyyy-MM-dd").parse("2019-02-21"),
+                        100000.0,0.0,0.0,0.0,0.0,1,"1","",
+                        new ArrayList<ArrayDetail>(
+                                Arrays.asList(new ArrayDetail("","","","","","","","","",0.0,0.0,0.0,0.0))
+                        )),
+                new RelateParty(new SpecifiedTaxRegistration("1212121212121"),"คำนำหนาชื่อ","ชื่อ","นามสกุล","1","V"),
+                new RelateContract(new SpecifiedTaxRegistration("1212121212121"),"คำนำหนาชื่อ","ชื่อ","นามสกุล","1","V"),
+                new Payment(100.0,0.0,100.0)
+
+        );
         
         RdFormSubmitReq payloadObj = new RdFormSubmitReq(
         		new DocumentDetail("rdtest201908200041001","OS9","7","01.00.0001",1), 
-        		new ArrayList<InstInfoSubmitReq>(), 
-        		new Summary()
+        		new ArrayList<InstInfoSubmitReq>(
+                        Arrays.asList(instInfo)
+                ),
+        		new Summary(100.0,0.0,100.0,
+                        new Payer(new SpecifiedTaxRegistration("1105878591534")),
+                        "2")
         		);
 
         String payloadStr = new Gson().toJson(payloadObj);

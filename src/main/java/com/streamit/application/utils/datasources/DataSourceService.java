@@ -36,7 +36,7 @@ class DataSourceServiceImp implements DataSourceService {
     public Map<String,Object> insert(String TABLE_NAME, List<StateValues> stateValues) throws SQLException {
         Map<String,Object> result = new HashMap<>();
         result.put("status",400);
-
+        String sql = "";
         Connection conn = null;
         PreparedStatement statement = null;
 
@@ -65,8 +65,8 @@ class DataSourceServiceImp implements DataSourceService {
                 }
             }
 
-            String sql = sql1 + "("+ sql2 + ")" + SQLConstantOperType.VALUES + "("+ sql3 + ")";
-            log.info("sql:{}",sql);
+            sql = sql1 + "("+ sql2 + ")" + SQLConstantOperType.VALUES + "("+ sql3 + ")";
+            //log.info("{}",sql);
 
             Boolean chk1 = !sql2.toString().equals("");
             Boolean chk2 = !sql3.toString().equals("");
@@ -83,7 +83,7 @@ class DataSourceServiceImp implements DataSourceService {
             //e.printStackTrace();
             conn.rollback();
             result.put("error",e.getMessage());
-            log.error("insert error:{}",e.getMessage());
+            log.error(sql);
 
         }finally {
             if (statement != null) statement.close();
@@ -96,7 +96,7 @@ class DataSourceServiceImp implements DataSourceService {
     public Map<String,Object> update(String TABLE_NAME, List<StateValues> stateValues) throws SQLException {
         Map<String,Object> result = new HashMap<>();
         result.put("status",400);
-
+        String sql = "";
         Connection conn = null;
         PreparedStatement statement = null;
 
@@ -135,7 +135,7 @@ class DataSourceServiceImp implements DataSourceService {
                 }
             }
 
-            String sql = "" + sql1 + sql2 + sql3;
+            sql = "" + sql1 + sql2 + sql3;
             //log.info("sql:{}",sql);
 
             Boolean chk1 = !sql2.toString().equals("");
@@ -153,7 +153,7 @@ class DataSourceServiceImp implements DataSourceService {
             //e.printStackTrace();
             conn.rollback();
             result.put("error",e.getMessage());
-            log.error("update error:{}",e.getMessage());
+            log.error(sql);
 
         }finally {
             if (statement != null) statement.close();
@@ -166,7 +166,7 @@ class DataSourceServiceImp implements DataSourceService {
     public Map<String,Object> delete(String TABLE_NAME, List<StateValues> stateValues) throws SQLException {
         Map<String,Object> result = new HashMap<>();
         result.put("status",400);
-
+        String sql = "";
         Connection conn = null;
         PreparedStatement statement = null;
 
@@ -195,8 +195,8 @@ class DataSourceServiceImp implements DataSourceService {
                 }
             }
 
-            String sql = "" + sql1 + sql2 ;
-            log.info("sql:{}",sql);
+            sql = "" + sql1 + sql2 ;
+            //log.info("sql:{}",sql);
 
             Boolean chk1 = !sql2.toString().equals("");
 
@@ -212,7 +212,7 @@ class DataSourceServiceImp implements DataSourceService {
             //e.printStackTrace();
             conn.rollback();
             result.put("error",e.getMessage());
-            log.error("update error:{}",e.getMessage());
+            log.error(sql);
 
         }finally {
             if (statement != null) statement.close();

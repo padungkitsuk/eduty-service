@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @SpringBootApplication
@@ -45,13 +46,9 @@ public class EDutyController {
         return new ResponseEntity<>(eDutyService.CheckReceiptFormData(type,req), HttpStatus.OK) ;
     }
 
-    @PostMapping("/correct/test-insert")
-    public ResponseEntity<Map<String,Object>> testInsert(@RequestBody CorrectDetailForm req) throws Exception{
-        return new ResponseEntity<>(eDutyService.TestInsertData(req), HttpStatus.OK) ;
-    }
 
-    @DeleteMapping("/correct/test-delete")
+    @DeleteMapping("/correct/delete")
     public ResponseEntity<Map<String,Object>> testDelete(@RequestBody CorrectDetailForm req) throws Exception{
-        return new ResponseEntity<>(eDutyService.TestDeleteData(req), HttpStatus.OK) ;
+        return new ResponseEntity<>(eDutyService.DeleteData(req), HttpStatus.OK) ;
     }
 }

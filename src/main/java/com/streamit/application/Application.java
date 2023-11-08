@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ImportResource;
 
 @SpringBootApplication
 @EnableAutoConfiguration
-@ImportResource({"classpath:eduty-inquiry.xml"})
+@ImportResource({"classpath:eduty-inquiry.xml","classpath:eduty-master.xml"})
 public class Application {
 
 	public static void main(String[] args) {

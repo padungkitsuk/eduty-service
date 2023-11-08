@@ -68,14 +68,14 @@ public class InquiryDAOImpl extends JdbcDaoSupport implements InquiryDAO, Serial
 
 		String sqlStr = sql + sqlCondition + groupBy + orderBy;
 //		logger.info("sql.." + sqlStr);
-		logger.info("param.." + param);
+//		logger.info("param.." + param);
 
 		/*** MYSQL EXCUTE SQL PAGGING ****/
 	
 		List resultList = getJdbcTemplate().query(sqlStr, param.toArray(),
 				new BeanPropertyRowMapper(Class.forName(classMapping)));
 		searchCriteria.getPagging().setTotalRow(resultList.size());
-		logger.info("result size:" + resultList.size());
+//		logger.info("result size:" + resultList.size());
 
 		return resultList;
 	}

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean id="masterProvinceInquiryDAO" class="com.streamit.others.dao.InquiryDAOImpl" autowire="byName">
+        <property name="sql">
+            <value>
+                <![CDATA[
+                            DECLARE @locale varchar(2)=?
+                            
+                            SELECT id,
+                            case @locale when 'EN' then name_en else name_th end label
+                            FROM thai_provinces
+                            WHERE 1=1 
+							
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.streamit.application.dto.master.MasterData</value>
+        </property>
+    </bean>
+
+    <bean id="masterAmphureInquiryDAO" class="com.streamit.others.dao.InquiryDAOImpl" autowire="byName">
+        <property name="sql">
+            <value>
+                <![CDATA[
+                            DECLARE @locale varchar(2)=?
+                            
+                            SELECT id,
+                            case @locale when 'EN' then name_en else name_th end label
+                            FROM thai_amphures 
+                            WHERE province_id =?
+							
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.streamit.application.dto.master.MasterData</value>
+        </property>
+    </bean>
+    
+    <bean id="masterTambonsInquiryDAO" class="com.streamit.others.dao.InquiryDAOImpl" autowire="byName">
+        <property name="sql">
+            <value>
+                <![CDATA[
+                            DECLARE @locale varchar(2)=?
+                            
+                            SELECT id,
+                            concat(case @locale when 'EN' then name_en else name_th end ,'|',zip_code) label 
+                            FROM thai_tambons 
+                            WHERE amphure_id = ?
+							
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.streamit.application.dto.master.MasterData</value>
+        </property>
+    </bean>
+    
+    <bean id="masterByZipCodeInquiryDAO" class="com.streamit.others.dao.InquiryDAOImpl" autowire="byName">
+        <property name="sql">
+            <value>
+                <![CDATA[
+                            DECLARE @locale varchar(2)=?
+                            
+                            SELECT tb.id,
+                            concat(
+                                   case @locale when 'EN' then tb.name_en else tb.name_th end ,'|',
+                                   tb.amphure_id ,'|',
+                                   case @locale when 'EN' then ap.name_en else ap.name_th end ,'|',
+                                   ap.province_id ,'|',
+                                   case @locale when 'EN' then pv.name_en else pv.name_th end ,'|',
+                                   tb.zip_code
+                                   ) label 
+                            FROM thai_tambons tb
+                            LEFT JOIN thai_amphures ap ON tb.amphure_id = ap.id 
+                            LEFT JOIN thai_provinces pv ON ap.province_id = pv.id  
+                            WHERE tb.zip_code = ?
+							
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.streamit.application.dto.master.MasterData</value>
+        </property>
+    </bean>
+
+</beans>

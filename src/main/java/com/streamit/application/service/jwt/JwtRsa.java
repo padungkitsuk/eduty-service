@@ -1,6 +1,7 @@
 package com.streamit.application.service.jwt;
 
 import com.google.gson.Gson;
+import com.streamit.application.dto.*;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -44,6 +45,24 @@ public class JwtRsa {
         //printStructure(token, publicKey);
     }
 
+    public static void main(String[] s) throws Exception {
+        RdFormSubmitReq payloadObj = new RdFormSubmitReq(
+                new DocumentDetail("rdtest201908200041001","OS9","7","01.00.0001",1),
+                new ArrayList<InstInfoSubmitReq>(
+                        Arrays.asList(new InstInfoSubmitReq())
+                ),
+                new Summary(100.0,0.0,100.0,
+                        new Payer(new SpecifiedTaxRegistration("1105878591534")),
+                        "2")
+        );
+
+        String payloadStr = new Gson().toJson(payloadObj);
+
+        String tokens = new JwtRsa().generateJwtToken(payloadStr);
+        System.out.println("jws="+tokens);
+        new JwtRsa().printStructure(tokens);
+    }
+
     @SuppressWarnings("deprecation")
     public String generateJwtToken(String payloadStr) throws Exception {
     	
@@ -74,6 +93,8 @@ public class JwtRsa {
         System.out.println("Header     : " + parseClaimsJws.getHeader());
         System.out.println("Body       : " + new Gson().toJson(parseClaimsJws.getBody()));
         System.out.println("Signature  : " + parseClaimsJws.getSignature());
+        System.out.println(publicKey);
+        System.out.println(getPrivateKey());
     }
 
 

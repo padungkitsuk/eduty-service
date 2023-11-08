@@ -3,6 +3,8 @@ package com.streamit.application.controller;
 import com.google.gson.Gson;
 import com.streamit.application.dto.*;
 import com.streamit.application.service.jwt.JWebToken;
+import com.streamit.application.simulate.data.RDSimulate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,9 @@ import java.util.*;
 @CrossOrigin
 @RequestMapping("/rd-test")
 public class RDTestController {
+
+    @Autowired
+    private RDSimulate rdSimulate;
 
     @PostMapping("/submitFilingAuth")
     public ResponseEntity<AuthRes> SubmitFilingAuth(@RequestBody AuthReq req) throws Exception{
@@ -150,5 +155,19 @@ public class RDTestController {
         );
 
         return new ResponseEntity<>(res, HttpStatus.OK) ;
+    }
+
+    @PostMapping("/simulate")
+    public ResponseEntity<Map<String,Object>> simulate() throws Exception{
+
+
+        return new ResponseEntity<>(rdSimulate.simulateDuty(), HttpStatus.OK) ;
+    }
+    
+    @PostMapping("/simulate/address")
+    public ResponseEntity<String> simulateaddress() throws Exception{
+
+
+        return new ResponseEntity<>(rdSimulate.simulateAddress(), HttpStatus.OK) ;
     }
 }
