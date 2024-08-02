@@ -62,7 +62,7 @@ class RDSimulateImp implements RDSimulate {
 		Integer[] list_moo = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
 		Integer lot_no = this.getRunningNoBy("lot_");
-		Integer yyyy_no = this.getRunningNoBy("2565/");
+		Integer yyyy_no = this.getRunningNoBy("2566/");
 		// log.info("yyyy_no={}",yyyy_no);
 		Long time = new Date().getTime();
 
@@ -91,7 +91,7 @@ class RDSimulateImp implements RDSimulate {
 				CorrectDetailForm detail = new CorrectDetailForm();
 				detail.setId(data.getId());
 				detail.setNo(no);
-				detail.setInstInfoId("2565/" + yyyy_no);
+				detail.setInstInfoId("2566/" + yyyy_no);
 				detail.setTaxPayerId(String.valueOf(faker.number().randomNumber(13, false)));
 				String firstName = this.simulateFirstName();
 				String lastName = this.simulateLastName();
